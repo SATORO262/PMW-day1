@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abdul Hadi · Immersive Portfolio</title>
+
+    <!-- Google Fonts: Playfair Display + Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+    />
+
+    <style>
+        /* ----- CSS Variables (Hyper-Vibrant Palette) ----- */
+        :root {
+            --deep-bg: #0b081a;
+            --glass-bg: rgba(15, 12, 41, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --glow-purple: #a855f7;
+            --glow-blue: #06b6d4;
+            --glow-pink: #ec4899;
+            --glow-orange: #f97316;
+            --glow-gold: #fbbf24;
+            --shadow-glow: 0 20px 60px rgba(168, 85, 247, 0.15);
+            --radius-xl: 32px;
+            --transition-smooth: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* ----- Reset & Base ----- */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--deep-bg);
+            color: var(--text-light);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ----- Three.js Canvas (fixed background) ----- */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ----- Animated gradient overlay (more dynamic) ----- */
+        #bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(168, 85, 247, 0.20) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 40%);
+            animation: breatheGlow 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes breatheGlow {
+            0% {
+                opacity: 0.5;
+                transform: scale(1) rotate(0deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.1) rotate(2deg);
+            }
+        }
+
+        /* ----- Sticky Navigation (Ultra Glass) ----- */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(24px) saturate(1.8);
+            -webkit-backdrop-filter: blur(24px) saturate(1.8);
+            background: rgba(11, 8, 26, 0.60);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.6rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.2rem 0.8rem;
+            transition: background var(--transition-smooth);
+        }
+
+        nav a {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: transparent;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 60px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--glow-purple), var(--glow-blue), var(--glow-pink));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        nav a:hover::before,
+        nav a.active::before {
+            opacity: 1;
+        }
+
+        nav a:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        nav a.active {
+            color: #fff;
+            background: rgba(168, 85, 247, 0.10);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.05);
+        }
+
+        /* ----- Main Content Container ----- */
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 2rem 1.8rem 4rem;
+        }
+
+        /* ----- Hero / Intro (Supreme) ----- */
+        .hero {
+            text-align: center;
+            padding: 6rem 0 3rem;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: clamp(3.6rem, 14vw, 7rem);
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 60px rgba(168, 85, 247, 0.20));
+            transition: filter 0.5s ease;
+            padding: 0.2rem 0;
+        }
+
+        .hero h1:hover {
+            filter: drop-shadow(0 0 100px rgba(168, 85, 247, 0.40));
+        }
+
+        .hero .subtitle {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+            margin-top: 0.4rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            opacity: 0.9;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: subtitleGradient 6s ease-in-out infinite alternate;
+            background-size: 300% 300%;
+        }
+
+        @keyframes subtitleGradient {
+            0% {
+                background-image: linear-gradient(135deg, #94a3b8, #a855f7);
+            }
+            33% {
+                background-image: linear-gradient(135deg, #a855f7, #06b6d4);
+            }
+            66% {
+                background-image: linear-gradient(135deg, #06b6d4, #ec4899);
+            }
+            100% {
+                background-image: linear-gradient(135deg, #ec4899, #fbbf24);
+            }
+        }
+
+        .hero .tagline {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 700;
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            margin-top: 0.8rem;
+            opacity: 0.95;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: taglineGradient 5s ease-in-out infinite alternate;
+            background-size: 300% 300%;
+            filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.10));
+        }
+
+        @keyframes taglineGradient {
+            0% {
+                background-image: linear-gradient(135deg, #fbbf24, #f97316);
+            }
+            50% {
+                background-image: linear-gradient(135deg, #f97316, #ec4899);
+            }
+            100% {
+                background-image: linear-gradient(135deg, #ec4899, #fbbf24);
+            }
+        }
+
+        /* ----- Leadership Introduction Card (Special) ----- */
+        .leadership-intro {
+            backdrop-filter: blur(20px) saturate(1.6);
+            -webkit-backdrop-filter: blur(20px) saturate(1.6);
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(6, 182, 212, 0.05));
+            border: 1px solid rgba(168, 85, 247, 0.12);
+            border-radius: var(--radius-xl);
+            padding: 3.5rem 3rem;
+            margin: 2rem 0 4rem;
+            box-shadow: var(--shadow-glow);
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .leadership-intro::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: var(--radius-xl);
+            padding: 1px;
+            background: conic-gradient(from var(--angle, 0deg),
+                    transparent 0%,
+                    var(--glow-purple) 20%,
+                    var(--glow-blue) 40%,
+                    var(--glow-pink) 60%,
+                    var(--glow-orange) 80%,
+                    transparent 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.4;
+            animation: rotateBorder 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotateBorder {
+            to {
+                --angle: 360deg;
+            }
+        }
+
+        .leadership-intro:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 80px rgba(168, 85, 247, 0.15);
+        }
+
+        .leadership-intro .badge {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 0.8rem;
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 60px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.20), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.10);
+            backdrop-filter: blur(4px);
+        }
+
+        .leadership-intro h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: clamp(2rem, 4.5vw, 3.2rem);
+            line-height: 1.15;
+            margin-bottom: 1.2rem;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: leadershipTitleGradient 7s ease-in-out infinite alternate;
+            background-size: 300% 300%;
+        }
+
+        @keyframes leadershipTitleGradient {
+            0% {
+                background-image: linear-gradient(135deg, #f8fafc, #a855f7);
+            }
+            33% {
+                background-image: linear-gradient(135deg, #a855f7, #06b6d4);
+            }
+            66% {
+                background-image: linear-gradient(135deg, #06b6d4, #fbbf24);
+            }
+            100% {
+                background-image: linear-gradient(135deg, #fbbf24, #ec4899);
+            }
+        }
+
+        .leadership-intro p {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.9;
+            margin-bottom: 0.8rem;
+        }
+
+        .leadership-intro p strong {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .leadership-intro .highlight-glow {
+            color: var(--glow-gold);
+            font-weight: 600;
+            text-shadow: 0 0 40px rgba(251, 191, 36, 0.10);
+        }
+
+        .leadership-intro .highlight-blue-glow {
+            color: var(--glow-blue);
+            font-weight: 600;
+            text-shadow: 0 0 40px rgba(6, 182, 212, 0.10);
+        }
+
+        .leadership-intro .highlight-pink-glow {
+            color: var(--glow-pink);
+            font-weight: 600;
+            text-shadow: 0 0 40px rgba(236, 72, 153, 0.10);
+        }
+
+        /* ----- Section Cards (Next-Gen Glass) ----- */
+        .section-card {
+            backdrop-filter: blur(20px) saturate(1.6);
+            -webkit-backdrop-filter: blur(20px) saturate(1.6);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 3.5rem 3rem;
+            margin: 4rem 0;
+            box-shadow: var(--shadow-glow);
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                border-color 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: var(--radius-xl);
+            padding: 1px;
+            background: conic-gradient(from var(--angle, 0deg),
+                    transparent 0%,
+                    var(--glow-purple) 20%,
+                    var(--glow-blue) 40%,
+                    var(--glow-pink) 60%,
+                    var(--glow-orange) 80%,
+                    transparent 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            animation: rotateBorder 6s linear infinite;
+            pointer-events: none;
+        }
+
+        .section-card:hover::before {
+            opacity: 0.6;
+        }
+
+        .section-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 30px 80px rgba(168, 85, 247, 0.15);
+            border-color: rgba(168, 85, 247, 0.15);
+        }
+
+        .section-card .label {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 0.8rem;
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 60px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(168, 85, 247, 0.10);
+            backdrop-filter: blur(4px);
+        }
+
+        .section-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            line-height: 1.15;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #67e8f9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-card p {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+            line-height: 1.9;
+        }
+
+        .section-card p strong {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .section-card .highlight-text {
+            color: var(--glow-gold);
+            font-weight: 600;
+            text-shadow: 0 0 40px rgba(251, 191, 36, 0.10);
+        }
+
+        .section-card .highlight-blue {
+            color: var(--glow-blue);
+            font-weight: 600;
+            text-shadow: 0 0 40px rgba(6, 182, 212, 0.10);
+        }
+
+        .section-card .highlight-orange {
+            color: var(--glow-orange);
+            font-weight: 600;
+            text-shadow: 0 0 40px rgba(249, 115, 22, 0.10);
+        }
+
+        .section-card .highlight-pink {
+            color: var(--glow-pink);
+            font-weight: 600;
+            text-shadow: 0 0 40px rgba(236, 72, 153, 0.10);
+        }
+
+        /* ----- Scroll-reveal animations ----- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px) scale(0.96);
+            transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1),
+                transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* ----- Contact Section (Minimal & Premium) ----- */
+        #contact {
+            text-align: center;
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 4rem;
+        }
+
+        #contact h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: clamp(2rem, 4vw, 3rem);
+            background: linear-gradient(135deg, #f1f5f9, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.2rem;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.2rem 2.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-links a {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.4rem 0.2rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            letter-spacing: 0.06em;
+            position: relative;
+        }
+
+        .contact-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--glow-purple), var(--glow-blue));
+            transition: width 0.4s ease;
+        }
+
+        .contact-links a:hover {
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .contact-links a:hover::after {
+            width: 100%;
+        }
+
+        .contact-links .email-link {
+            color: var(--glow-blue);
+        }
+        .contact-links .linkedin-link {
+            color: var(--glow-purple);
+        }
+        .contact-links .github-link {
+            color: var(--text-muted);
+        }
+        .contact-links .twitter-link {
+            color: var(--glow-pink);
+        }
+
+        .credit {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.15);
+            margin-top: 3rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* ----- Responsive Fine-Tuning ----- */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.4rem 0.8rem;
+                gap: 0.1rem 0.4rem;
+            }
+            nav a {
+                font-size: 0.55rem;
+                padding: 0.4rem 0.8rem;
+                letter-spacing: 0.05em;
+            }
+            .content {
+                padding: 1rem 1rem 3rem;
+            }
+            .section-card {
+                padding: 2rem 1.5rem;
+                margin: 2.5rem 0;
+                border-radius: 24px;
+            }
+            .leadership-intro {
+                padding: 2rem 1.5rem;
+                margin: 1.5rem 0 3rem;
+                border-radius: 24px;
+            }
+            .hero {
+                padding: 4rem 0 2rem;
+            }
+            .contact-links {
+                gap: 0.8rem 1.8rem;
+            }
+            .contact-links a {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav a {
+                font-size: 0.5rem;
+                padding: 0.3rem 0.6rem;
+            }
+            .section-card {
+                padding: 1.5rem 1rem;
+            }
+            .leadership-intro {
+                padding: 1.5rem 1rem;
+            }
+            .leadership-intro p {
+                font-size: 0.92rem;
+            }
+            .section-card p {
+                font-size: 0.92rem;
+            }
+            .hero h1 {
+                font-size: clamp(2.6rem, 12vw, 3.8rem);
+            }
+        }
+
+        /* ----- Custom Scrollbar (Ultra Sleek) ----- */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--deep-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--glow-purple), var(--glow-blue));
+            border-radius: 12px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--glow-pink);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Three.js Canvas -->
+    <div id="three-canvas"></div>
+
+    <!-- Animated background overlay -->
+    <div id="bg-overlay"></div>
+
+    <!-- ===== STICKY NAVIGATION ===== -->
+    <nav id="navbar" role="navigation" aria-label="Main navigation">
+        <a href="#early" class="active">Early</a>
+        <a href="#mun">MUN</a>
+        <a href="#parliamentary">Parliamentary</a>
+        <a href="#fiaz">Fiaz</a>
+        <a href="#nerc">NERC</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="content">
+
+        <!-- HERO -->
+        <section class="hero reveal visible">
+            <h1 id="dynamic-title">Abdul Hadi's Portfolio</h1>
+            <p class="subtitle">Storyteller · Debater · Leader</p>
+            <p class="tagline">"Every loss carved the path to every win."</p>
+        </section>
+
+        <!-- ===== LEADERSHIP INTRODUCTION ===== -->
+        <section class="leadership-intro reveal" data-section="leadership">
+            <span class="badge">The Leader Within</span>
+            <h2>Elected to Lead, Built to Inspire</h2>
+            <p>
+                I have always been drawn to <strong>leadership</strong> — not for the title, but for the
+                opportunity to <span class="highlight-glow">shape outcomes</span> and uplift those around me.
+                When my peers elected me as their leader, it was both a humbling and defining moment.
+                I stepped into the role with a clear vision: to build a team that operated not as individuals,
+                but as a <span class="highlight-blue-glow">cohesive unit</span>. I learned that leadership is
+                not about wielding authority; it is about listening intently, making decisions with empathy,
+                and inspiring others to believe in a shared goal.
+            </p>
+            <p>
+                From coordinating practice sessions to resolving conflicts during high-pressure tournaments,
+                I discovered that the best leaders are those who <span class="highlight-pink-glow">serve</span>.
+                I managed my team with a balance of discipline and encouragement, ensuring that every member
+                felt valued and heard. Whether it was rallying the team before a debate or recalibrating our
+                strategy after a loss, I thrived in the chaos, turning challenges into opportunities for
+                <span class="highlight-gold">collective growth</span>. That experience taught me that true
+                leadership is the art of empowering others to become the best versions of themselves —
+                and in doing so, we became unstoppable together.
+            </p>
+            <p style="margin-top: 0.4rem;">
+                <span style="color: var(--glow-gold); font-weight: 600; text-shadow: 0 0 30px rgba(251, 191, 36, 0.10);">
+                "A leader is one who knows the way, goes the way, and shows the way."
+                </span>
+            </p>
+        </section>
+
+        <!-- ===== SECTION 1: EARLY ===== -->
+        <section id="early" class="section-card reveal" data-section="early">
+            <span class="label">Chapter 01</span>
+            <h2>Early Debater &amp; Sports</h2>
+            <p>
+                My journey began with <strong>debate</strong>, <strong>swimming</strong>,
+                and <strong>chess</strong>. The first taste was bitter — a loss because
+                our team wasn't prepared. But that defeat ignited something in me.
+                We practised relentlessly, and the next year we clinched
+                <span class="highlight-text">2nd place</span>.
+            </p>
+            <p>
+                I have always loved sports. Chess, in particular, became a mirror of life:
+                I won some matches, lost others, and each game taught me
+                <span class="highlight-blue">resilience</span>. The board doesn't lie —
+                it reveals your patience, your foresight, and your courage to sacrifice.
+            </p>
+            <p>
+                My peers saw something in me too. I was <strong>elected as a leader</strong>,
+                and I took that responsibility to heart. I managed and guided my team
+                through tough tournaments, discovering that true leadership is not about
+                commanding — it's about <span class="highlight-orange">listening, trusting,
+                and elevating</span> those around you.
+            </p>
+        </section>
+
+        <!-- ===== SECTION 2: MUN ===== -->
+        <section id="mun" class="section-card reveal" data-section="mun">
+            <span class="label">Chapter 02</span>
+            <h2>Model United Nations</h2>
+            <p>
+                Stepping into the MUN arena, I was uncertain. Would my words land?
+                Would my voice matter? I poured my heart into my speech, not knowing
+                if it would resonate.
+            </p>
+            <p>
+                Then came the moment that changed everything. A judge — someone I
+                deeply respected — leaned forward and said, <span class="highlight-text">
+                "You have strong confidence and potential."</span> Those words lit a fire.
+                They encouraged me to step onto the <span class="highlight-blue">main stage</span>,
+                not as a participant, but as a force.
+            </p>
+            <p>
+                That was the day I learned that <strong>perception is reality</strong>.
+                If you believe in your voice, others will too.
+            </p>
+        </section>
+
+        <!-- ===== SECTION 3: PARLIAMENTARY ===== -->
+        <section id="parliamentary" class="section-card reveal" data-section="parliamentary">
+            <span class="label">Chapter 03</span>
+            <h2>Parliamentary Debates</h2>
+            <p>
+                If MUN was a stage, Parliamentary Debates were a battlefield.
+                The rules were <span class="highlight-orange">completely different</span> —
+                faster, sharper, more unforgiving. I walked onto that stage without
+                help from seniors, trusting only my own preparation.
+            </p>
+            <p>
+                I faltered. My speech lacked the precision it needed, and my team
+                lost. It was <strong>humbling</strong> — a brutal reminder that
+                confidence without craft is hollow.
+            </p>
+            <p>
+                But that loss became my <span class="highlight-text">greatest teacher</span>.
+                I learned to respect the rules, to prepare with discipline, and to
+                never underestimate the power of <span class="highlight-blue">adaptability</span>.
+            </p>
+        </section>
+
+        <!-- ===== SECTION 4: FIAZ ===== -->
+        <section id="fiaz" class="section-card reveal" data-section="fiaz">
+            <span class="label">Chapter 04</span>
+            <h2>Fiaz Festival</h2>
+            <p>
+                The Fiaz Festival was an <strong>international cultural performance</strong>
+                where I had the honour of representing my own culture. The stakes were
+                high, and the pressure was immense.
+            </p>
+            <p>
+                My instructor was unconvinced at first. He doubted whether I could
+                capture the essence of our heritage on that grand stage. But I saw
+                his scepticism as <span class="highlight-orange">fuel</span>.
+            </p>
+            <p>
+                I rehearsed until every movement, every word, every note felt like
+                second nature. On the night of the performance, I stepped into the
+                spotlight and <strong>proved him wrong</strong>. I aced the stage,
+                delivering one of the <span class="highlight-text">best performances
+                of the entire event</span>. That night, I learned that the greatest
+                validation comes not from approval, but from <span class="highlight-blue">
+                exceeding expectations</span> — including your own.
+            </p>
+        </section>
+
+        <!-- ===== SECTION 5: NERC ===== -->
+        <section id="nerc" class="section-card reveal" data-section="nerc">
+            <span class="label">Chapter 05</span>
+            <h2>NERC — National Engineering &amp; Robotics Competition</h2>
+            <p>
+                Islamabad. Three days. The National Engineering and Robotics
+                Competition was the <strong>biggest challenge</strong> I had ever faced.
+                We were up against university students who had prepared for a full
+                month — while we were battling final exams.
+            </p>
+            <p>
+                We couldn't prepare as thoroughly as we wanted. Sleep was a luxury,
+                and our prototypes were built in the cracks between study sessions.
+                But we showed up with <span class="highlight-orange">grit</span> and
+                <span class="highlight-text">determination</span>.
+            </p>
+            <p>
+                We didn't win the trophy. But we walked away with something far more
+                valuable: the knowledge that <strong>we could compete</strong> with
+                the best, even when the odds were stacked against us. That experience
+                forged a <span class="highlight-blue">resilience</span> that no
+                classroom could ever teach.
+            </p>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <section id="contact" class="reveal">
+            <h2>Let's Connect</h2>
+            <p style="color: var(--text-muted); font-weight: 300; max-width: 480px; margin: 0 auto 0.8rem;">
+                I'm always open to meaningful conversations, collaborations, and new challenges.
+            </p>
+            <div class="contact-links">
+                <a href="mailto:abdul.hadi@example.com" class="email-link">Email</a>
+                <a href="#" class="linkedin-link">LinkedIn</a>
+                <a href="#" class="github-link">GitHub</a>
+                <a href="#" class="twitter-link">Twitter</a>
+            </div>
+            <p class="credit">Abdul Hadi · Portfolio</p>
+        </section>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- THREE.JS – loaded via importmap from unpkg (latest version)   -->
+    <!-- ============================================================ -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.170.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        // --------------------------------------------------------------
+        // IMPORTS
+        // --------------------------------------------------------------
+        import * as THREE from 'three';
+
+        // --------------------------------------------------------------
+        // DOM refs
+        // --------------------------------------------------------------
+        const container = document.getElementById('three-canvas');
+
+        // --------------------------------------------------------------
+        // SCENE, CAMERA, RENDERER
+        // --------------------------------------------------------------
+        const scene = new THREE.Scene();
+        scene.background = null;
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 0, 16);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true,
+            powerPreference: "high-performance",
+        });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.shadowMap.enabled = false;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        container.appendChild(renderer.domElement);
+
+        // --------------------------------------------------------------
+        // LIGHTS (Cinematic)
+        // --------------------------------------------------------------
+        const ambientLight = new THREE.AmbientLight(0x404080, 0.5);
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0x8b5cf6, 1.5);
+        mainLight.position.set(2, 5, 8);
+        scene.add(mainLight);
+
+        const fillLight = new THREE.DirectionalLight(0x06b6d4, 1.0);
+        fillLight.position.set(-4, 2, 4);
+        scene.add(fillLight);
+
+        const rimLight = new THREE.DirectionalLight(0xec4899, 0.8);
+        rimLight.position.set(0, -3, -6);
+        scene.add(rimLight);
+
+        const pointLight = new THREE.PointLight(0xf97316, 0.6, 30);
+        pointLight.position.set(0, -1, 5);
+        scene.add(pointLight);
+
+        // --------------------------------------------------------------
+        // PARTICLE SYSTEM (Galaxy / Nebula)
+        // --------------------------------------------------------------
+        const particleCount = 1500;
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        const sizes = new Float32Array(particleCount);
+
+        const palette = [
+            new THREE.Color(0x8b5cf6),
+            new THREE.Color(0x06b6d4),
+            new THREE.Color(0xec4899),
+            new THREE.Color(0xf97316),
+            new THREE.Color(0xfbbf24),
+            new THREE.Color(0x34d399),
+        ];
+
+        for (let i = 0; i < particleCount; i++) {
+            const radius = 6 + Math.random() * 8;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+
+            positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+            positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.5;
+            positions[i * 3 + 2] = radius * Math.cos(phi) * 0.6;
+
+            const col = palette[Math.floor(Math.random() * palette.length)];
+            colors[i * 3] = col.r;
+            colors[i * 3 + 1] = col.g;
+            colors[i * 3 + 2] = col.b;
+
+            sizes[i] = 0.02 + Math.random() * 0.12;
+        }
+
+        const particleGeo = new THREE.BufferGeometry();
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        particleGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        const particleMat = new THREE.PointsMaterial({
+            size: 0.12,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.85,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            sizeAttenuation: true,
+        });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        scene.add(particles);
+
+        // --------------------------------------------------------------
+        // MAIN 3D OBJECTS (Abstract & Representative)
+        // --------------------------------------------------------------
+        const objectPositions = [
+            { x: -4.8, y: 1.8, z: 0.5 }, // early
+            { x: -2.4, y: -0.8, z: 1.2 }, // mun
+            { x: 0.0, y: 2.4, z: -0.8 }, // parliamentary
+            { x: 2.6, y: -1.4, z: 1.0 }, // fiaz
+            { x: 5.0, y: 0.6, z: -0.6 }, // nerc
+        ];
+
+        // ---- Helper: Glow Ring ----
+        function createGlowRing(color, radius = 0.9, intensity = 0.3) {
+            const geo = new THREE.TorusGeometry(radius, 0.04, 24, 60);
+            const mat = new THREE.MeshStandardMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: intensity,
+                transparent: true,
+                opacity: 0.5,
+                wireframe: false,
+                roughness: 0.2,
+                metalness: 0.1,
+            });
+            return new THREE.Mesh(geo, mat);
+        }
+
+        // ---- 1. EARLY: Podium + Pawn + Wave ----
+        function createEarlyObject() {
+            const group = new THREE.Group();
+            const podiumMat = new THREE.MeshStandardMaterial({ color: 0x6d28d9, emissive: 0x6d28d9, emissiveIntensity: 0.15,
+                roughness: 0.3, metalness: 0.4 });
+            const podium = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.4, 0.7), podiumMat);
+            podium.position.y = -0.2;
+            podium.position.z = 0.2;
+            group.add(podium);
+
+            const micMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, emissive: 0x8b5cf6, emissiveIntensity: 0.1,
+                roughness: 0.2, metalness: 0.8 });
+            const micStand = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.7), micMat);
+            micStand.position.set(0.15, 0.35, 0.4);
+            group.add(micStand);
+            const micHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), micMat);
+            micHead.position.set(0.15, 0.8, 0.4);
+            group.add(micHead);
+
+            const pawnMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.1,
+                roughness: 0.4, metalness: 0.3 });
+            const base = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.35, 0.2, 16), pawnMat);
+            base.position.set(-0.5, -0.05, -0.3);
+            group.add(base);
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 0.3, 16), pawnMat);
+            stem.position.set(-0.5, 0.2, -0.3);
+            group.add(stem);
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), pawnMat);
+            head.position.set(-0.5, 0.45, -0.3);
+            group.add(head);
+
+            const waveMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, emissive: 0x06b6d4, emissiveIntensity: 0.2,
+                transparent: true, opacity: 0.5, roughness: 0.1, metalness: 0.1 });
+            const wave = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.04, 12, 40), waveMat);
+            wave.position.set(0.4, -0.3, -0.6);
+            wave.rotation.x = Math.PI / 2.2;
+            wave.rotation.z = 0.4;
+            group.add(wave);
+
+            const ring = createGlowRing(0x8b5cf6, 1.2, 0.4);
+            ring.position.y = -0.1;
+            group.add(ring);
+            return group;
+        }
+
+        // ---- 2. MUN: Gavel & Podium ----
+        function createMUNObject() {
+            const group = new THREE.Group();
+            const mat = new THREE.MeshStandardMaterial({ color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.2,
+                roughness: 0.2, metalness: 0.6 });
+            const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.9, 12), mat);
+            handle.position.y = 0.1;
+            handle.rotation.z = 0.2;
+            group.add(handle);
+
+            const headMat = new THREE.MeshStandardMaterial({ color: 0x6d28d9, emissive: 0x6d28d9, emissiveIntensity: 0.15,
+                roughness: 0.3, metalness: 0.3 });
+            const head = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.25, 12), headMat);
+            head.position.y = 0.65;
+            head.rotation.z = 0.2;
+            group.add(head);
+
+            const ring = createGlowRing(0x8b5cf6, 0.8, 0.5);
+            ring.position.y = 0.15;
+            group.add(ring);
+            return group;
+        }
+
+        // ---- 3. PARLIAMENTARY: Microphone Stand ----
+        function createParliamentaryObject() {
+            const group = new THREE.Group();
+            const mat = new THREE.MeshStandardMaterial({ color: 0xec4899, emissive: 0xec4899, emissiveIntensity: 0.2,
+                roughness: 0.2, metalness: 0.7 });
+            const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 1.2, 10), mat);
+            stand.position.y = 0.0;
+            group.add(stand);
+            const base = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, 0.08, 12), mat);
+            base.position.y = -0.6;
+            group.add(base);
+
+            const micMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, emissive: 0xec4899, emissiveIntensity: 0.15,
+                roughness: 0.1, metalness: 0.9 });
+            const mic = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), micMat);
+            mic.position.y = 0.65;
+            group.add(mic);
+
+            const ring = createGlowRing(0xec4899, 0.7, 0.6);
+            ring.position.y = 0.0;
+            group.add(ring);
+            return group;
+        }
+
+        // ---- 4. FIAZ: Cultural Mask (Torus Knot) ----
+        function createFiazObject() {
+            const group = new THREE.Group();
+            const mat = new THREE.MeshStandardMaterial({ color: 0xf97316, emissive: 0xf97316, emissiveIntensity: 0.25,
+                roughness: 0.2, metalness: 0.2, wireframe: false });
+            const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(0.5, 0.15, 80, 16), mat);
+            knot.position.y = 0.0;
+            knot.scale.set(1, 1.3, 0.9);
+            group.add(knot);
+
+            const ringMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.2,
+                transparent: true, opacity: 0.4, wireframe: false });
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.04, 16, 50), ringMat);
+            ring.position.y = 0.0;
+            ring.rotation.x = Math.PI / 2.5;
+            group.add(ring);
+
+            const ring2 = createGlowRing(0xf97316, 0.95, 0.6);
+            ring2.position.y = 0.0;
+            group.add(ring2);
+            return group;
+        }
+
+        // ---- 5. NERC: Robot / Engineering ----
+        function createNERCObject() {
+            const group = new THREE.Group();
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x34d399, emissive: 0x34d399, emissiveIntensity: 0.15,
+                roughness: 0.3, metalness: 0.4 });
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, 0.4), bodyMat);
+            body.position.y = 0.0;
+            group.add(body);
+
+            const headMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, emissive: 0x06b6d4, emissiveIntensity: 0.2,
+                roughness: 0.2, metalness: 0.6 });
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), headMat);
+            head.position.y = 0.45;
+            group.add(head);
+
+            const armMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, emissive: 0x34d399, emissiveIntensity: 0.1,
+                roughness: 0.4, metalness: 0.3 });
+            const armL = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.35, 0.07), armMat);
+            armL.position.set(-0.38, 0.1, 0);
+            armL.rotation.z = 0.3;
+            group.add(armL);
+            const armR = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.35, 0.07), armMat);
+            armR.position.set(0.38, 0.1, 0);
+            armR.rotation.z = -0.3;
+            group.add(armR);
+
+            const antMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.2 });
+            const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.2), antMat);
+            ant.position.set(0, 0.6, 0.1);
+            ant.rotation.x = 0.2;
+            group.add(ant);
+            const tip = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), antMat);
+            tip.position.set(0, 0.75, 0.15);
+            group.add(tip);
+
+            const ring = createGlowRing(0x34d399, 0.8, 0.5);
+            ring.position.y = 0.0;
+            group.add(ring);
+            return group;
+        }
+
+        // ---- Build all objects ----
+        const objectBuilders = [createEarlyObject, createMUNObject, createParliamentaryObject, createFiazObject,
+            createNERCObject
+        ];
+        const objectMeshes = [];
+
+        objectBuilders.forEach((builder, i) => {
+            const obj = builder();
+            const pos = objectPositions[i];
+            obj.position.set(pos.x, pos.y, pos.z);
+            obj.userData = {
+                baseScale: 1.0,
+                currentScale: 1.0,
+                index: i,
+                rotSpeed: 0.2 + Math.random() * 0.3,
+                floatOffset: Math.random() * Math.PI * 2,
+                floatAmp: 0.06 + Math.random() * 0.06,
+            };
+            obj.rotation.x = (Math.random() - 0.5) * 0.4;
+            obj.rotation.y = (Math.random() - 0.5) * 0.4;
+            scene.add(obj);
+            objectMeshes.push(obj);
+        });
+
+        // ---- Floating Decorative Shapes ----
+        const extraShapes = [];
+        const extraMat = new THREE.MeshStandardMaterial({
+            color: 0x8b5cf6,
+            emissive: 0x8b5cf6,
+            emissiveIntensity: 0.05,
+            transparent: true,
+            opacity: 0.08,
+            wireframe: true,
+        });
+        for (let i = 0; i < 10; i++) {
+            const geo = new THREE.IcosahedronGeometry(0.2 + Math.random() * 0.3, 0);
+            const mesh = new THREE.Mesh(geo, extraMat);
+            const theta = Math.random() * Math.PI * 2;
+            const r = 4 + Math.random() * 4;
+            mesh.position.set(
+                Math.cos(theta) * r,
+                (Math.random() - 0.5) * 5,
+                Math.sin(theta) * r * 0.6
+            );
+            mesh.userData = {
+                rotSpeed: 0.1 + Math.random() * 0.2,
+                floatOffset: Math.random() * Math.PI * 2,
+            };
+            scene.add(mesh);
+            extraShapes.push(mesh);
+        }
+
+        // --------------------------------------------------------------
+        // MOUSE TRACKING
+        // --------------------------------------------------------------
+        const mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+        document.addEventListener('mousemove', (e) => {
+            mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const t = e.touches[0];
+                mouse.targetX = (t.clientX / window.innerWidth) * 2 - 1;
+                mouse.targetY = -(t.clientY / window.innerHeight) * 2 + 1;
+            }
+        }, { passive: true });
+
+        // --------------------------------------------------------------
+        // SCROLL STATE
+        // --------------------------------------------------------------
+        const sectionMap = { early: 0, mun: 1, parliamentary: 2, fiaz: 3, nerc: 4 };
+        let currentSection = 'early';
+
+        const sections = document.querySelectorAll('.section-card');
+        const observer = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('data-section');
+                    if (id && sectionMap[id] !== undefined) {
+                        currentSection = id;
+                        document.querySelectorAll('nav a').forEach((a) => {
+                            a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+                        });
+                    }
+                }
+            }
+        }, { threshold: 0.35, rootMargin: '0px 0px -30px 0px' });
+        sections.forEach((sec) => observer.observe(sec));
+        document.querySelector('.hero') && observer.observe(document.querySelector('.hero'));
+
+        // Also observe leadership intro
+        const leadershipEl = document.querySelector('.leadership-intro');
+        if (leadershipEl) observer.observe(leadershipEl);
+
+        // --------------------------------------------------------------
+        // ANIMATION LOOP
+        // --------------------------------------------------------------
+        const clock = new THREE.Clock();
+
+        function animate() {
+            const t = clock.getElapsedTime();
+
+            // Smooth mouse
+            mouse.x += (mouse.targetX - mouse.x) * 0.05;
+            mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+            // Camera Parallax
+            camera.position.x = mouse.x * 0.4;
+            camera.position.y = mouse.y * 0.3;
+            camera.lookAt(0, 0, 0);
+
+            // Particles
+            particles.rotation.y += 0.0005;
+            particles.rotation.x += 0.0001;
+
+            // Main Objects
+            const highlightedIndex = sectionMap[currentSection] ?? 0;
+            objectMeshes.forEach((obj, i) => {
+                const ud = obj.userData;
+                const floatY = Math.sin(t * 0.7 + ud.floatOffset) * ud.floatAmp;
+                obj.position.y = objectPositions[i].y + floatY;
+                obj.rotation.y += ud.rotSpeed * 0.01;
+                obj.rotation.x += ud.rotSpeed * 0.005;
+
+                const isHighlighted = (i === highlightedIndex);
+                const target = isHighlighted ? 1.3 : 0.7;
+                ud.currentScale += (target - ud.currentScale) * 0.04;
+                obj.scale.set(ud.currentScale, ud.currentScale, ud.currentScale);
+
+                obj.children.forEach((child) => {
+                    if (child.isMesh && child.material) {
+                        const materials = Array.isArray(child.material) ? child.material : [child.material];
+                        materials.forEach((mat) => {
+                            if (mat.emissiveIntensity !== undefined) {
+                                const base = mat.userData?.baseEmissive ?? 0.1;
+                                mat.emissiveIntensity = isHighlighted ? base * 4.0 : base;
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Extra shapes
+            extraShapes.forEach((mesh) => {
+                const ud = mesh.userData;
+                mesh.rotation.x += ud.rotSpeed * 0.008;
+                mesh.rotation.y += ud.rotSpeed * 0.01;
+                mesh.position.y += Math.sin(t * 0.3 + ud.floatOffset) * 0.0008;
+            });
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --------------------------------------------------------------
+        // RESIZE
+        // --------------------------------------------------------------
+        function resize() {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        }
+        window.addEventListener('resize', resize);
+
+        // --------------------------------------------------------------
+        // CONTENT REVEAL
+        // --------------------------------------------------------------
+        const revealObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            }
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+        // --------------------------------------------------------------
+        // SMOOTH NAV
+        // --------------------------------------------------------------
+        document.querySelectorAll('nav a').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // ---- Store base emissive ----
+        objectMeshes.forEach((obj) => {
+            obj.children.forEach((child) => {
+                if (child.isMesh && child.material) {
+                    const materials = Array.isArray(child.material) ? child.material : [child.material];
+                    materials.forEach((mat) => {
+                        if (mat.emissiveIntensity !== undefined) {
+                            mat.userData = mat.userData || {};
+                            mat.userData.baseEmissive = mat.emissiveIntensity;
+                        }
+                    });
+                }
+            });
+        });
+
+        // ---- Initial highlight ----
+        setTimeout(() => {
+            const first = document.querySelector('.section-card');
+            if (first) {
+                const id = first.getAttribute('data-section');
+                if (id && sectionMap[id] !== undefined) currentSection = id;
+            }
+        }, 100);
+
+        // --------------------------------------------------------------
+        // DYNAMIC GRADIENT (Ultra Vibrant) for Title
+        // --------------------------------------------------------------
+        const titleEl = document.getElementById('dynamic-title');
+        const colorSets = [
+            ['#f8fafc', '#a855f7', '#06b6d4', '#ec4899'],
+            ['#f8fafc', '#ec4899', '#f97316', '#fbbf24'],
+            ['#f8fafc', '#34d399', '#06b6d4', '#a855f7'],
+            ['#f8fafc', '#fbbf24', '#f97316', '#ec4899'],
+            ['#f8fafc', '#a855f7', '#ec4899', '#06b6d4'],
+        ];
+        let idx = 0;
+
+        function updateGradient() {
+            const c = colorSets[idx % colorSets.length];
+            titleEl.style.backgroundImage = `linear-gradient(135deg, ${c[0]} 0%, ${c[1]} 30%, ${c[2]} 60%, ${c[3]} 100%)`;
+            idx++;
+        }
+        updateGradient();
+        setInterval(updateGradient, 1200);
+
+        console.log('🚀 Abdul Hadi · Ultimate Immersive Portfolio');
+    </script>
+
+</body>
+</html>
