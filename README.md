@@ -1,1 +1,5 @@
-Abdul Hadi's check list
+About the Project
+This portfolio was created by Abdul Hadi as part of an extra-curricular initiative, driven by a purpose that extends well beyond a conventional portfolio. It serves as a single, comprehensive webpage that covers everything about Abdul Hadi — his background, his experiences, and most importantly, the real mistakes he has made throughout his journey. Each story presented here is entirely genuine; nothing has been fabricated or exaggerated. The intention is straightforward: by sharing these honest accounts, others may gain valuable insight, recognise similar pitfalls in their own paths, and make more informed decisions as a result.
+How to Navigate
+At the very top of the webpage, the visitor will find a row of concise icons. Each icon represents one specific journey from Abdul Hadi's life. Upon clicking any single icon, the full story unfolds — detailing what happened, what went wrong, and what was ultimately learned from the experience. The principle is simple: one icon, one journey, one lesson. The project is built entirely with HTML, CSS, and JavaScript, keeping it lightweight, fast, and accessible to anyone without the need for additional tools or installations.
+email: rip8956kl@gmail.com whatsapp number:03264244449 website link:https://transcendent-centaur-4df5ea.netlify.app/
