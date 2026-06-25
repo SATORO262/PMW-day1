@@ -1,0 +1,34 @@
+print()
+print("Unit converter")
+print()
+
+conversions_rows = [
+    (1, 'km', 'mi'),
+    (2, 'mi', 'km'),
+    (3, 'kg', 'lbs'),
+    (4, 'lbs', 'kg'),
+   (5, '°F', '°C'),
+    (6, '°C', '°F')
+]
+
+print("Conversions available")
+print()
+
+# Printing just the number and the 3 units in a row, with no "Length = " text
+for number, unit1, unit2, unit3 in conversions_rows:
+    print(f"{number}: {unit1}  {unit2}  {unit3}")
+
+print() 
+conversion = input('Please enter the number') 
+conversion_index = int(conversion) - 1
+
+conversion_numeber, from_unit, to_unit = conversions_available [conversion_index] 
+print() 
+from_value = float(input(f'{Enter unit} --> '))
+print() 
+if conversion_numeber ==1 
+to_value = from_value *0.62
+print(f'{from_value} {from_value} -> {to_value} {to_unit}')
+elif conversion_numeber ==2
+to_value = from_value * 1.61
+print(f'{from_value} {from_value} -> {to_value} {to_unit}')
